@@ -1837,7 +1837,7 @@ Evaluate if this is a good entry. Consider:
           },
           { role: "user", content: prompt },
         ],
-        max_tokens: 250,
+        max_tokens: 1500,
         temperature: 0.3,
         response_format: { type: "json_object" },
       });
@@ -2254,7 +2254,7 @@ Evaluate if this is a good entry. Consider: Is the sentiment justified? Is it to
           },
           { role: "user", content: prompt },
         ],
-        max_tokens: 250,
+        max_tokens: 1500,
         temperature: 0.3,
         response_format: { type: "json_object" },
       });

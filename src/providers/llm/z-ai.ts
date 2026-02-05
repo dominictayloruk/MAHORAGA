@@ -13,6 +13,7 @@ interface ZAIResponse {
     message: {
       role: string;
       content: string;
+      reasoning_content?: string;
     };
     finish_reason: string;
   }>;
@@ -46,6 +47,14 @@ export class ZAIProvider implements LLMProvider {
       body.response_format = params.response_format;
     }
 
+    console.log(`[Z.AI] Request:`, {
+      model: body.model,
+      hasResponseFormat: !!params.response_format,
+      responseFormat: params.response_format,
+      maxTokens: body.max_tokens,
+      messagesCount: params.messages.length,
+    });
+
     const response = await fetch(`${this.baseUrl}/chat/completions`, {
       method: "POST",
       headers: {
@@ -57,12 +66,38 @@ export class ZAIProvider implements LLMProvider {
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error(`[Z.AI] API Error:`, {
+        status: response.status,
+        statusText: response.statusText,
+        errorBody: errorText,
+      });
       throw createError(ErrorCode.PROVIDER_ERROR, `Z.AI API error (${response.status}): ${errorText}`);
     }
 
     const data = (await response.json()) as ZAIResponse;
 
-    const content = data.choices[0]?.message?.content ?? "";
+    console.log(`[Z.AI] Response:`, {
+      id: data.id,
+      choicesCount: data.choices.length,
+      hasContent: !!data.choices[0]?.message?.content,
+      contentLength: data.choices[0]?.message?.content?.length || 0,
+      contentPreview: data.choices[0]?.message?.content?.substring(0, 200) || "EMPTY",
+      finishReason: data.choices[0]?.finish_reason,
+      usage: data.usage,
+    });
+
+    let content = data.choices[0]?.message?.content ?? "";
+    const reasoningContent = data.choices[0]?.message?.reasoning_content;
+
+    if (!content || content.trim() === "") {
+      if (reasoningContent && data.choices[0]?.finish_reason === "length") {
+        console.warn(`[Z.AI] Content empty due to token limit, reasoning model used all tokens on chain-of-thought. Consider increasing max_tokens.`);
+      }
+      console.error(`[Z.AI] Empty Response Detected:`, {
+        fullResponse: JSON.stringify(data, null, 2),
+        requestBody: JSON.stringify(body, null, 2),
+      });
+    }
 
     return {
       content,
