@@ -25,6 +25,7 @@ export interface Env {
   DISCORD_WEBHOOK_URL?: string;
   MAHORAGA_API_TOKEN: string;
   KILL_SWITCH_SECRET: string;
+  CORS_ALLOWED_ORIGINS?: string;
 
   ENVIRONMENT: string;
   FEATURE_LLM_RESEARCH: string;

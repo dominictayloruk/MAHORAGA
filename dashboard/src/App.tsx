@@ -11,7 +11,7 @@ import { StatusBar, StatusIndicator } from "./components/StatusIndicator";
 import { Tooltip, TooltipContent } from "./components/Tooltip";
 import type { Config, LogEntry, PortfolioSnapshot, Position, Signal, SignalResearch, Status } from "./types";
 
-const API_BASE = "/api";
+const API_BASE = import.meta.env.VITE_API_BASE || "/api";
 
 function getApiToken(): string {
   return (

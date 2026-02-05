@@ -24,16 +24,37 @@ function isAuthorized(request: Request, env: Env): boolean {
   return constantTimeCompare(authHeader.slice(7), token);
 }
 
-function unauthorizedResponse(): Response {
+function unauthorizedResponse(corsHeaders: HeadersInit = {}): Response {
   return new Response(JSON.stringify({ error: "Unauthorized. Requires: Authorization: Bearer <MAHORAGA_API_TOKEN>" }), {
     status: 401,
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...corsHeaders },
   });
+}
+
+function getCorsHeaders(request: Request, env: Env): Record<string, string> {
+  const origin = request.headers.get("Origin") || "";
+  const allowedOrigins = env.CORS_ALLOWED_ORIGINS?.split(",").map((o: string) => o.trim()) || [];
+  const isLocalhost = origin.startsWith("http://localhost:") || origin.startsWith("http://127.0.0.1:");
+  
+  if (isLocalhost || allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+    return {
+      "Access-Control-Allow-Origin": origin,
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Max-Age": "86400",
+    };
+  }
+  return {};
 }
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    const corsHeaders = getCorsHeaders(request, env);
+
+    if (request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: corsHeaders });
+    }
 
     if (url.pathname === "/health") {
       return new Response(
@@ -78,13 +99,22 @@ export default {
       const agentPath = url.pathname.replace("/agent", "") || "/status";
       const agentUrl = new URL(agentPath, "http://harness");
       agentUrl.search = url.search;
-      return stub.fetch(
+      const response = await stub.fetch(
         new Request(agentUrl.toString(), {
           method: request.method,
           headers: request.headers,
           body: request.body,
         })
       );
+      const newHeaders = new Headers(response.headers);
+      for (const [key, value] of Object.entries(corsHeaders)) {
+        newHeaders.set(key, value);
+      }
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: newHeaders,
+      });
     }
 
     return new Response("Not found", { status: 404 });
