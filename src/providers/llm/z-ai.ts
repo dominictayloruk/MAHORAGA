@@ -31,13 +31,23 @@ export class ZAIProvider implements LLMProvider {
 
   constructor(config: ZAIConfig) {
     this.apiKey = config.apiKey;
-    this.model = config.model ?? "GLM-4.7";
+    // If model looks like an OpenAI/other provider model, use Z.AI default
+    const providedModel = config.model?.toLowerCase() ?? "";
+    const isNonZAIModel = providedModel.includes("gpt") || providedModel.includes("claude") || providedModel.includes("gemini");
+    this.model = isNonZAIModel ? "GLM-4.7" : (config.model ?? "GLM-4.7");
     this.baseUrl = (config.baseUrl ?? "https://api.z.ai/api/coding/paas/v4").trim().replace(/\/+$/, "");
+  }
+
+  private normalizeModel(model?: string): string {
+    if (!model) return this.model;
+    const lower = model.toLowerCase();
+    const isNonZAIModel = lower.includes("gpt") || lower.includes("claude") || lower.includes("gemini");
+    return isNonZAIModel ? this.model : model;
   }
 
   async complete(params: CompletionParams): Promise<CompletionResult> {
     const body: Record<string, unknown> = {
-      model: params.model ?? this.model,
+      model: this.normalizeModel(params.model),
       messages: params.messages,
       temperature: params.temperature ?? 0.7,
       max_tokens: params.max_tokens ?? 1024,

@@ -10,6 +10,8 @@ export interface CloudflareGatewayConfig {
   token: string;
   /** Default model in format "provider/model" (e.g., "openai/gpt-4o-mini") */
   model?: string;
+  /** Provider API key (e.g., OpenAI API key) - required for BYOK mode */
+  providerApiKey?: string;
 }
 
 interface OpenAICompatResponse {
@@ -65,6 +67,7 @@ export class CloudflareGatewayProvider implements LLMProvider {
   private baseUrl: string;
   private token: string;
   private model: string;
+  private providerApiKey?: string;
 
   constructor(config: CloudflareGatewayConfig) {
     if (!config.accountId) {
@@ -80,6 +83,7 @@ export class CloudflareGatewayProvider implements LLMProvider {
     this.baseUrl = `https://gateway.ai.cloudflare.com/v1/${config.accountId}/${config.gatewayId}/compat`;
     this.token = config.token;
     this.model = config.model ?? "openai/gpt-4o-mini";
+    this.providerApiKey = config.providerApiKey;
   }
 
   async complete(params: CompletionParams): Promise<CompletionResult> {
@@ -101,6 +105,7 @@ export class CloudflareGatewayProvider implements LLMProvider {
         headers: {
           "Content-Type": "application/json",
           "cf-aig-authorization": `Bearer ${this.token}`,
+          ...(this.providerApiKey && { Authorization: `Bearer ${this.providerApiKey}` }),
         },
         body: JSON.stringify(body),
       });

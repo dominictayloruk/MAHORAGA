@@ -48,11 +48,35 @@ export function createLLMProvider(env: Env): LLMProvider | null {
       // Cloudflare /compat expects provider/model. If user passes an unqualified model, default to OpenAI.
       const effectiveModel = model.includes("/") ? model : `openai/${model}`;
 
+      // Determine provider API key based on model prefix (for BYOK mode)
+      const [providerPrefix] = effectiveModel.split("/");
+      let providerApiKey: string | undefined;
+      switch (providerPrefix?.toLowerCase()) {
+        case "openai":
+          providerApiKey = env.OPENAI_API_KEY;
+          break;
+        case "anthropic":
+          providerApiKey = env.ANTHROPIC_API_KEY;
+          break;
+        case "google-ai-studio":
+        case "google":
+          providerApiKey = env.GOOGLE_GENERATIVE_AI_API_KEY;
+          break;
+        case "grok":
+        case "xai":
+          providerApiKey = env.XAI_API_KEY;
+          break;
+        case "deepseek":
+          providerApiKey = env.DEEPSEEK_API_KEY;
+          break;
+      }
+
       return createCloudflareGatewayProvider({
         accountId: env.CLOUDFLARE_AI_GATEWAY_ACCOUNT_ID,
         gatewayId: env.CLOUDFLARE_AI_GATEWAY_ID,
         token: env.CLOUDFLARE_AI_GATEWAY_TOKEN,
         model: effectiveModel,
+        providerApiKey,
       });
     }
 
