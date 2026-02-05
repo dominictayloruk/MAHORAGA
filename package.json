@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "build": "tsc",
+    "build": "npm run build:dashboard && tsc",
+    "build:dashboard": "npm run --prefix dashboard build",
     "deploy": "wrangler deploy",
     "deploy:production": "wrangler deploy --env production",
     "db:migrate": "wrangler d1 migrations apply mahoraga-db --local",

@@ -6,6 +6,11 @@
 	"compatibility_flags": [
 		"nodejs_compat"
 	],
+	"assets": {
+		"directory": "dashboard/dist",
+		"binding": "ASSETS",
+		"not_found_handling": "single-page-application"
+	},
 	"vars": {
 		"ENVIRONMENT": "production",
 		"FEATURE_LLM_RESEARCH": "true",

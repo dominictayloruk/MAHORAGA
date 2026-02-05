@@ -69,22 +69,27 @@ export default {
       );
     }
 
-    if (url.pathname === "/") {
-      return new Response(
-        JSON.stringify({
-          name: "mahoraga",
-          version: "0.3.0",
-          description: "Autonomous LLM-powered trading agent on Cloudflare Workers",
-          endpoints: {
-            health: "/health",
-            mcp: "/mcp (auth required)",
-            agent: "/agent/* (auth required)",
-          },
-        }),
-        {
-          headers: { "Content-Type": "application/json" },
-        }
+    if (url.pathname.startsWith("/api")) {
+      const stub = getHarnessStub(env);
+      const agentPath = url.pathname.replace("/api", "") || "/status";
+      const agentUrl = new URL(agentPath, "http://harness");
+      agentUrl.search = url.search;
+      const response = await stub.fetch(
+        new Request(agentUrl.toString(), {
+          method: request.method,
+          headers: request.headers,
+          body: request.body,
+        })
       );
+      const newHeaders = new Headers(response.headers);
+      for (const [key, value] of Object.entries(corsHeaders)) {
+        newHeaders.set(key, value);
+      }
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: newHeaders,
+      });
     }
 
     if (url.pathname.startsWith("/mcp")) {
@@ -117,7 +122,7 @@ export default {
       });
     }
 
-    return new Response("Not found", { status: 404 });
+    return env.ASSETS.fetch(request);
   },
 
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
