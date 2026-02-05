@@ -1857,13 +1857,16 @@ Evaluate if this is a good entry. Consider:
         catalysts: string[];
       };
 
-      if (
-        !analysis.verdict ||
-        typeof analysis.confidence !== "number" ||
-        !analysis.entry_quality ||
-        !analysis.reasoning
-      ) {
-        throw new Error("Invalid LLM response: missing required fields");
+      const missingFields: string[] = [];
+      if (!analysis.verdict) missingFields.push("verdict");
+      if (typeof analysis.confidence !== "number") missingFields.push("confidence");
+      if (!analysis.entry_quality) missingFields.push("entry_quality");
+      if (!analysis.reasoning) missingFields.push("reasoning");
+
+      if (missingFields.length > 0) {
+        throw new Error(
+          `Invalid LLM response: missing [${missingFields.join(", ")}]. Raw: ${content.substring(0, 200)}`
+        );
       }
 
       const result: ResearchResult = {
@@ -2271,13 +2274,16 @@ Evaluate if this is a good entry. Consider: Is the sentiment justified? Is it to
         catalysts: string[];
       };
 
-      if (
-        !analysis.verdict ||
-        typeof analysis.confidence !== "number" ||
-        !analysis.entry_quality ||
-        !analysis.reasoning
-      ) {
-        throw new Error("Invalid LLM response: missing required fields");
+      const missingFields: string[] = [];
+      if (!analysis.verdict) missingFields.push("verdict");
+      if (typeof analysis.confidence !== "number") missingFields.push("confidence");
+      if (!analysis.entry_quality) missingFields.push("entry_quality");
+      if (!analysis.reasoning) missingFields.push("reasoning");
+
+      if (missingFields.length > 0) {
+        throw new Error(
+          `Invalid LLM response: missing [${missingFields.join(", ")}]. Raw: ${content.substring(0, 200)}`
+        );
       }
 
       const result: ResearchResult = {
