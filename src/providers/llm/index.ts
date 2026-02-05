@@ -7,3 +7,4 @@ export { CloudflareGatewayProvider, createCloudflareGatewayProvider } from "./cl
 export type { LLMProviderType } from "./factory";
 export { createLLMProvider, isLLMConfigured } from "./factory";
 export { createOpenAIProvider, OpenAIProvider } from "./openai";
+export { createZAIProvider, ZAIProvider } from "./z-ai";

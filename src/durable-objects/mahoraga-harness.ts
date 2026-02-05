@@ -74,7 +74,7 @@ interface AgentConfig {
   stale_social_volume_decay: number; // [TUNE] Exit if volume drops to this % of entry
 
   // LLM configuration
-  llm_provider: "openai-raw" | "ai-sdk" | "cloudflare-gateway"; // [TUNE] Provider: openai-raw, ai-sdk, cloudflare-gateway
+  llm_provider: "openai-raw" | "ai-sdk" | "cloudflare-gateway" | "z-ai"; // [TUNE] Provider: openai-raw, ai-sdk, cloudflare-gateway, z-ai
   llm_model: string; // [TUNE] Model for quick research (gpt-4o-mini)
   llm_analyst_model: string; // [TUNE] Model for deep analysis (gpt-4o)
   llm_min_hold_minutes: number; // [TUNE] Min minutes before LLM can recommend sell (default: 30)
@@ -1817,15 +1817,15 @@ Evaluate if this is a good entry. Consider:
 - Any major news/events affecting this crypto?
 - Risk/reward at current price level?
 
-JSON response:
-{
-  "verdict": "BUY|SKIP|WAIT",
-  "confidence": 0.0-1.0,
-  "entry_quality": "excellent|good|fair|poor",
-  "reasoning": "brief reason",
-  "red_flags": ["any concerns"],
-  "catalysts": ["positive factors"]
-}`;
+ JSON response:
+ {
+   "verdict": "BUY|SKIP|WAIT",
+   "confidence": 0.0-1.0,
+   "entry_quality": "excellent|good|fair|poor",
+   "reasoning": "brief reason",
+   "red_flags": ["any concerns"],
+   "catalysts": ["positive factors"]
+ }`;
 
       const response = await this._llm.complete({
         model: this.state.config.llm_model, // Use config model (usually cheap one)
@@ -1856,6 +1856,15 @@ JSON response:
         red_flags: string[];
         catalysts: string[];
       };
+
+      if (
+        !analysis.verdict ||
+        typeof analysis.confidence !== "number" ||
+        !analysis.entry_quality ||
+        !analysis.reasoning
+      ) {
+        throw new Error("Invalid LLM response: missing required fields");
+      }
 
       const result: ResearchResult = {
         symbol,
@@ -2223,15 +2232,15 @@ CURRENT DATA:
 
 Evaluate if this is a good entry. Consider: Is the sentiment justified? Is it too late (already pumped)? Any red flags?
 
-JSON response:
-{
-  "verdict": "BUY|SKIP|WAIT",
-  "confidence": 0.0-1.0,
-  "entry_quality": "excellent|good|fair|poor",
-  "reasoning": "brief reason",
-  "red_flags": ["any concerns"],
-  "catalysts": ["positive factors"]
-}`;
+ JSON response:
+ {
+   "verdict": "BUY|SKIP|WAIT",
+   "confidence": 0.0-1.0,
+   "entry_quality": "excellent|good|fair|poor",
+   "reasoning": "brief reason",
+   "red_flags": ["any concerns"],
+   "catalysts": ["positive factors"]
+ }`;
 
       const response = await this._llm.complete({
         model: this.state.config.llm_model,
@@ -2261,6 +2270,15 @@ JSON response:
         red_flags: string[];
         catalysts: string[];
       };
+
+      if (
+        !analysis.verdict ||
+        typeof analysis.confidence !== "number" ||
+        !analysis.entry_quality ||
+        !analysis.reasoning
+      ) {
+        throw new Error("Invalid LLM response: missing required fields");
+      }
 
       const result: ResearchResult = {
         symbol,

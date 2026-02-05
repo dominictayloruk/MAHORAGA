@@ -1,43 +1,43 @@
-import { useState } from 'react'
-import type { Config } from '../types'
-import { Panel } from './Panel'
+import { useState } from "react";
+import type { Config } from "../types";
+import { Panel } from "./Panel";
 
 interface SettingsModalProps {
-  config: Config
-  onSave: (config: Config) => void
-  onClose: () => void
+  config: Config;
+  onSave: (config: Config) => void;
+  onClose: () => void;
 }
 
 export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
-  const [localConfig, setLocalConfig] = useState<Config>(config)
-  const [saving, setSaving] = useState(false)
-  const [apiToken, setApiToken] = useState(localStorage.getItem('mahoraga_api_token') || '')
+  const [localConfig, setLocalConfig] = useState<Config>(config);
+  const [saving, setSaving] = useState(false);
+  const [apiToken, setApiToken] = useState(localStorage.getItem("mahoraga_api_token") || "");
 
   // Note: We intentionally do NOT sync localConfig with the config prop after initial mount.
   // This prevents the parent's polling (every 5s) from overwriting user's unsaved changes.
 
   const handleTokenSave = () => {
     if (apiToken) {
-      localStorage.setItem('mahoraga_api_token', apiToken)
+      localStorage.setItem("mahoraga_api_token", apiToken);
     } else {
-      localStorage.removeItem('mahoraga_api_token')
+      localStorage.removeItem("mahoraga_api_token");
     }
-    window.location.reload()
-  }
+    window.location.reload();
+  };
 
   const handleChange = <K extends keyof Config>(key: K, value: Config[K]) => {
-    setLocalConfig(prev => ({ ...prev, [key]: value }))
-  }
+    setLocalConfig((prev) => ({ ...prev, [key]: value }));
+  };
 
   const handleSave = async () => {
-    setSaving(true)
+    setSaving(true);
     try {
-      await onSave(localConfig)
-      onClose()
+      await onSave(localConfig);
+      onClose();
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={onClose}>
@@ -50,7 +50,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
           </button>
         }
       >
-        <div onClick={e => e.stopPropagation()} className="space-y-6">
+        <div onClick={(e) => e.stopPropagation()} className="space-y-6">
           {/* API Authentication */}
           <div className="pb-4 border-b border-hud-line">
             <h3 className="hud-label mb-3 text-hud-error">API Authentication (Required)</h3>
@@ -59,7 +59,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                 type="password"
                 className="hud-input flex-1"
                 value={apiToken}
-                onChange={e => setApiToken(e.target.value)}
+                onChange={(e) => setApiToken(e.target.value)}
                 placeholder="Enter MAHORAGA_API_TOKEN"
               />
               <button className="hud-button" onClick={handleTokenSave}>
@@ -81,7 +81,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   type="number"
                   className="hud-input w-full"
                   value={localConfig.max_position_value}
-                  onChange={e => handleChange('max_position_value', Number(e.target.value))}
+                  onChange={(e) => handleChange("max_position_value", Number(e.target.value))}
                 />
               </div>
               <div>
@@ -90,7 +90,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   type="number"
                   className="hud-input w-full"
                   value={localConfig.max_positions}
-                  onChange={e => handleChange('max_positions', Number(e.target.value))}
+                  onChange={(e) => handleChange("max_positions", Number(e.target.value))}
                 />
               </div>
               <div>
@@ -99,7 +99,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   type="number"
                   className="hud-input w-full"
                   value={localConfig.position_size_pct_of_cash}
-                  onChange={e => handleChange('position_size_pct_of_cash', Number(e.target.value))}
+                  onChange={(e) => handleChange("position_size_pct_of_cash", Number(e.target.value))}
                 />
               </div>
             </div>
@@ -116,7 +116,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   step="0.05"
                   className="hud-input w-full"
                   value={localConfig.min_sentiment_score}
-                  onChange={e => handleChange('min_sentiment_score', Number(e.target.value))}
+                  onChange={(e) => handleChange("min_sentiment_score", Number(e.target.value))}
                 />
               </div>
               <div>
@@ -126,7 +126,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   step="0.05"
                   className="hud-input w-full"
                   value={localConfig.min_analyst_confidence}
-                  onChange={e => handleChange('min_analyst_confidence', Number(e.target.value))}
+                  onChange={(e) => handleChange("min_analyst_confidence", Number(e.target.value))}
                 />
               </div>
             </div>
@@ -142,7 +142,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   type="number"
                   className="hud-input w-full"
                   value={localConfig.take_profit_pct}
-                  onChange={e => handleChange('take_profit_pct', Number(e.target.value))}
+                  onChange={(e) => handleChange("take_profit_pct", Number(e.target.value))}
                 />
               </div>
               <div>
@@ -151,7 +151,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   type="number"
                   className="hud-input w-full"
                   value={localConfig.stop_loss_pct}
-                  onChange={e => handleChange('stop_loss_pct', Number(e.target.value))}
+                  onChange={(e) => handleChange("stop_loss_pct", Number(e.target.value))}
                 />
               </div>
             </div>
@@ -168,7 +168,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   step="1000"
                   className="hud-input w-full"
                   value={localConfig.data_poll_interval_ms}
-                  onChange={e => handleChange('data_poll_interval_ms', Number(e.target.value))}
+                  onChange={(e) => handleChange("data_poll_interval_ms", Number(e.target.value))}
                 />
               </div>
               <div>
@@ -178,7 +178,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   step="1000"
                   className="hud-input w-full"
                   value={localConfig.analyst_interval_ms}
-                  onChange={e => handleChange('analyst_interval_ms', Number(e.target.value))}
+                  onChange={(e) => handleChange("analyst_interval_ms", Number(e.target.value))}
                 />
               </div>
             </div>
@@ -192,24 +192,28 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                 <label className="hud-label block mb-1">Provider</label>
                 <select
                   className="hud-input w-full"
-                  value={localConfig.llm_provider || 'openai-raw'}
-                  onChange={e => handleChange('llm_provider', e.target.value as Config['llm_provider'])}
+                  value={localConfig.llm_provider || "openai-raw"}
+                  onChange={(e) => handleChange("llm_provider", e.target.value as Config["llm_provider"])}
                 >
                   <option value="openai-raw">OpenAI Direct (default)</option>
                   <option value="ai-sdk">AI SDK (5 providers)</option>
                   <option value="cloudflare-gateway">Cloudflare AI Gateway</option>
+                  <option value="z-ai">Z.AI</option>
                   {localConfig.llm_provider &&
-                    !['openai-raw', 'ai-sdk', 'cloudflare-gateway'].includes(localConfig.llm_provider) && (
+                    !["openai-raw", "ai-sdk", "cloudflare-gateway", "z-ai"].includes(localConfig.llm_provider) && (
                       <option value={localConfig.llm_provider}>Custom (backend configured)</option>
                     )}
                 </select>
                 <p className="text-[9px] text-hud-text-dim mt-1">
-                  {localConfig.llm_provider === 'ai-sdk' && 'Supports: OpenAI, Anthropic, Google, xAI, DeepSeek'}
-                  {(!localConfig.llm_provider || localConfig.llm_provider === 'openai-raw') && 'Uses OPENAI_API_KEY directly (+ optional OPENAI_BASE_URL).'}
+                  {localConfig.llm_provider === "ai-sdk" && "Supports: OpenAI, Anthropic, Google, xAI, DeepSeek"}
+                  {(!localConfig.llm_provider || localConfig.llm_provider === "openai-raw") &&
+                    "Uses OPENAI_API_KEY directly (+ optional OPENAI_BASE_URL)."}
                   {localConfig.llm_provider &&
-                    !['openai-raw', 'ai-sdk', 'cloudflare-gateway'].includes(localConfig.llm_provider) &&
-                    'Provider is configured in the backend; selection is hidden in the dashboard.'}
-                  {localConfig.llm_provider === 'cloudflare-gateway' && 'Uses CLOUDFLARE_AI_GATEWAY_* env vars via Cloudflare AI Gateway /compat.'}
+                    !["openai-raw", "ai-sdk", "cloudflare-gateway", "z-ai"].includes(localConfig.llm_provider) &&
+                    "Provider is configured in the backend; selection is hidden in the dashboard."}
+                  {localConfig.llm_provider === "cloudflare-gateway" &&
+                    "Uses CLOUDFLARE_AI_GATEWAY_* env vars via Cloudflare AI Gateway /compat."}
+                  {localConfig.llm_provider === "z-ai" && "Uses ZAI_API_KEY via Z.AI API (OpenAI-compatible)."}
                 </p>
               </div>
             </div>
@@ -219,15 +223,15 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                 <select
                   className="hud-input w-full"
                   value={localConfig.llm_model}
-                  onChange={e => handleChange('llm_model', e.target.value)}
+                  onChange={(e) => handleChange("llm_model", e.target.value)}
                 >
-                  {(!localConfig.llm_provider || localConfig.llm_provider === 'openai-raw') && (
+                  {(!localConfig.llm_provider || localConfig.llm_provider === "openai-raw") && (
                     <>
                       <option value="gpt-4o-mini">gpt-4o-mini</option>
                       <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
                     </>
                   )}
-                  {localConfig.llm_provider === 'ai-sdk' && (
+                  {localConfig.llm_provider === "ai-sdk" && (
                     <>
                       <optgroup label="OpenAI">
                         <option value="openai/gpt-4o-mini">gpt-4o-mini</option>
@@ -245,7 +249,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                       </optgroup>
                     </>
                   )}
-                  {localConfig.llm_provider === 'cloudflare-gateway' && (
+                  {localConfig.llm_provider === "cloudflare-gateway" && (
                     <>
                       <optgroup label="OpenAI">
                         <option value="openai/gpt-4o-mini">gpt-4o-mini</option>
@@ -262,8 +266,14 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                       </optgroup>
                     </>
                   )}
+                  {localConfig.llm_provider === "z-ai" && (
+                    <>
+                      <option value="GLM-4.5-air">GLM-4.5-air (lightweight, fast)</option>
+                      <option value="GLM-4.7">GLM-4.7 (standard)</option>
+                    </>
+                  )}
                   {localConfig.llm_provider &&
-                    !['openai-raw', 'ai-sdk', 'cloudflare-gateway'].includes(localConfig.llm_provider) && (
+                    !["openai-raw", "ai-sdk", "cloudflare-gateway", "z-ai"].includes(localConfig.llm_provider) && (
                       <option value={localConfig.llm_model}>{localConfig.llm_model}</option>
                     )}
                 </select>
@@ -272,17 +282,17 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                 <label className="hud-label block mb-1">Analyst Model (smart)</label>
                 <select
                   className="hud-input w-full"
-                  value={localConfig.llm_analyst_model || 'gpt-4o'}
-                  onChange={e => handleChange('llm_analyst_model', e.target.value)}
+                  value={localConfig.llm_analyst_model || "gpt-4o"}
+                  onChange={(e) => handleChange("llm_analyst_model", e.target.value)}
                 >
-                  {(!localConfig.llm_provider || localConfig.llm_provider === 'openai-raw') && (
+                  {(!localConfig.llm_provider || localConfig.llm_provider === "openai-raw") && (
                     <>
                       <option value="gpt-5.2-2025-12-11">GPT-5.2 (best)</option>
                       <option value="gpt-4o">gpt-4o</option>
                       <option value="gpt-4o-mini">gpt-4o-mini (cheaper)</option>
                     </>
                   )}
-                  {localConfig.llm_provider === 'ai-sdk' && (
+                  {localConfig.llm_provider === "ai-sdk" && (
                     <>
                       <optgroup label="OpenAI">
                         <option value="openai/gpt-4o">gpt-4o</option>
@@ -309,7 +319,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                       </optgroup>
                     </>
                   )}
-                  {localConfig.llm_provider === 'cloudflare-gateway' && (
+                  {localConfig.llm_provider === "cloudflare-gateway" && (
                     <>
                       <optgroup label="OpenAI">
                         <option value="openai/gpt-5.2">gpt-5.2 (best)</option>
@@ -329,10 +339,16 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                       </optgroup>
                     </>
                   )}
+                  {localConfig.llm_provider === "z-ai" && (
+                    <>
+                      <option value="GLM-4.7">GLM-4.7 (standard, complex tasks)</option>
+                      <option value="GLM-4.5-air">GLM-4.5-air (lightweight, faster)</option>
+                    </>
+                  )}
                   {localConfig.llm_provider &&
-                    !['openai-raw', 'ai-sdk', 'cloudflare-gateway'].includes(localConfig.llm_provider) && (
-                      <option value={localConfig.llm_analyst_model || 'gpt-4o'}>
-                        {localConfig.llm_analyst_model || 'gpt-4o'}
+                    !["openai-raw", "ai-sdk", "cloudflare-gateway", "z-ai"].includes(localConfig.llm_provider) && (
+                      <option value={localConfig.llm_analyst_model || "gpt-4o"}>
+                        {localConfig.llm_analyst_model || "gpt-4o"}
                       </option>
                     )}
                 </select>
@@ -350,7 +366,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   type="number"
                   className="hud-input w-full"
                   value={localConfig.starting_equity || 100000}
-                  onChange={e => handleChange('starting_equity', Number(e.target.value))}
+                  onChange={(e) => handleChange("starting_equity", Number(e.target.value))}
                 />
                 <p className="text-xs text-hud-text-dim mt-1">For P&L calculation</p>
               </div>
@@ -367,7 +383,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                     type="checkbox"
                     className="hud-input w-4 h-4"
                     checked={localConfig.options_enabled || false}
-                    onChange={e => handleChange('options_enabled', e.target.checked)}
+                    onChange={(e) => handleChange("options_enabled", e.target.checked)}
                   />
                   <span className="hud-label">Enable Options Trading</span>
                 </label>
@@ -379,7 +395,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   step="0.05"
                   className="hud-input w-full"
                   value={localConfig.options_min_confidence || 0.75}
-                  onChange={e => handleChange('options_min_confidence', Number(e.target.value))}
+                  onChange={(e) => handleChange("options_min_confidence", Number(e.target.value))}
                   disabled={!localConfig.options_enabled}
                 />
               </div>
@@ -390,7 +406,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   step="0.5"
                   className="hud-input w-full"
                   value={localConfig.options_max_pct_per_trade || 2}
-                  onChange={e => handleChange('options_max_pct_per_trade', Number(e.target.value))}
+                  onChange={(e) => handleChange("options_max_pct_per_trade", Number(e.target.value))}
                   disabled={!localConfig.options_enabled}
                 />
               </div>
@@ -400,7 +416,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   type="number"
                   className="hud-input w-full"
                   value={localConfig.options_min_dte || 7}
-                  onChange={e => handleChange('options_min_dte', Number(e.target.value))}
+                  onChange={(e) => handleChange("options_min_dte", Number(e.target.value))}
                   disabled={!localConfig.options_enabled}
                 />
               </div>
@@ -410,7 +426,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   type="number"
                   className="hud-input w-full"
                   value={localConfig.options_max_dte || 45}
-                  onChange={e => handleChange('options_max_dte', Number(e.target.value))}
+                  onChange={(e) => handleChange("options_max_dte", Number(e.target.value))}
                   disabled={!localConfig.options_enabled}
                 />
               </div>
@@ -421,7 +437,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   step="0.05"
                   className="hud-input w-full"
                   value={localConfig.options_target_delta || 0.35}
-                  onChange={e => handleChange('options_target_delta', Number(e.target.value))}
+                  onChange={(e) => handleChange("options_target_delta", Number(e.target.value))}
                   disabled={!localConfig.options_enabled}
                 />
               </div>
@@ -431,7 +447,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   type="number"
                   className="hud-input w-full"
                   value={localConfig.options_stop_loss_pct || 50}
-                  onChange={e => handleChange('options_stop_loss_pct', Number(e.target.value))}
+                  onChange={(e) => handleChange("options_stop_loss_pct", Number(e.target.value))}
                   disabled={!localConfig.options_enabled}
                 />
               </div>
@@ -441,7 +457,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   type="number"
                   className="hud-input w-full"
                   value={localConfig.options_take_profit_pct || 100}
-                  onChange={e => handleChange('options_take_profit_pct', Number(e.target.value))}
+                  onChange={(e) => handleChange("options_take_profit_pct", Number(e.target.value))}
                   disabled={!localConfig.options_enabled}
                 />
               </div>
@@ -458,19 +474,26 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                     type="checkbox"
                     className="hud-input w-4 h-4"
                     checked={localConfig.crypto_enabled || false}
-                    onChange={e => handleChange('crypto_enabled', e.target.checked)}
+                    onChange={(e) => handleChange("crypto_enabled", e.target.checked)}
                   />
                   <span className="hud-label">Enable Crypto Trading</span>
                 </label>
-                <p className="text-[9px] text-hud-text-dim mt-1">Trade crypto 24/7 based on momentum. Alpaca supports 20+ coins.</p>
+                <p className="text-[9px] text-hud-text-dim mt-1">
+                  Trade crypto 24/7 based on momentum. Alpaca supports 20+ coins.
+                </p>
               </div>
               <div>
                 <label className="hud-label block mb-1">Symbols (comma-separated)</label>
                 <input
                   type="text"
                   className="hud-input w-full"
-                  value={(localConfig.crypto_symbols || ['BTC/USD', 'ETH/USD', 'SOL/USD']).join(', ')}
-                  onChange={e => handleChange('crypto_symbols', e.target.value.split(',').map(s => s.trim()))}
+                  value={(localConfig.crypto_symbols || ["BTC/USD", "ETH/USD", "SOL/USD"]).join(", ")}
+                  onChange={(e) =>
+                    handleChange(
+                      "crypto_symbols",
+                      e.target.value.split(",").map((s) => s.trim())
+                    )
+                  }
                   disabled={!localConfig.crypto_enabled}
                   placeholder="BTC/USD, ETH/USD, SOL/USD, DOGE/USD, AVAX/USD..."
                 />
@@ -482,7 +505,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   step="0.5"
                   className="hud-input w-full"
                   value={localConfig.crypto_momentum_threshold || 2.0}
-                  onChange={e => handleChange('crypto_momentum_threshold', Number(e.target.value))}
+                  onChange={(e) => handleChange("crypto_momentum_threshold", Number(e.target.value))}
                   disabled={!localConfig.crypto_enabled}
                 />
               </div>
@@ -492,7 +515,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   type="number"
                   className="hud-input w-full"
                   value={localConfig.crypto_max_position_value || 1000}
-                  onChange={e => handleChange('crypto_max_position_value', Number(e.target.value))}
+                  onChange={(e) => handleChange("crypto_max_position_value", Number(e.target.value))}
                   disabled={!localConfig.crypto_enabled}
                 />
               </div>
@@ -502,7 +525,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   type="number"
                   className="hud-input w-full"
                   value={localConfig.crypto_take_profit_pct || 10}
-                  onChange={e => handleChange('crypto_take_profit_pct', Number(e.target.value))}
+                  onChange={(e) => handleChange("crypto_take_profit_pct", Number(e.target.value))}
                   disabled={!localConfig.crypto_enabled}
                 />
               </div>
@@ -512,7 +535,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   type="number"
                   className="hud-input w-full"
                   value={localConfig.crypto_stop_loss_pct || 5}
-                  onChange={e => handleChange('crypto_stop_loss_pct', Number(e.target.value))}
+                  onChange={(e) => handleChange("crypto_stop_loss_pct", Number(e.target.value))}
                   disabled={!localConfig.crypto_enabled}
                 />
               </div>
@@ -529,7 +552,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                     type="checkbox"
                     className="hud-input w-4 h-4"
                     checked={localConfig.stale_position_enabled ?? true}
-                    onChange={e => handleChange('stale_position_enabled', e.target.checked)}
+                    onChange={(e) => handleChange("stale_position_enabled", e.target.checked)}
                   />
                   <span className="hud-label">Enable Stale Position Detection</span>
                 </label>
@@ -540,7 +563,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   type="number"
                   className="hud-input w-full"
                   value={localConfig.stale_max_hold_days || 3}
-                  onChange={e => handleChange('stale_max_hold_days', Number(e.target.value))}
+                  onChange={(e) => handleChange("stale_max_hold_days", Number(e.target.value))}
                   disabled={!localConfig.stale_position_enabled}
                 />
               </div>
@@ -551,7 +574,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   step="0.5"
                   className="hud-input w-full"
                   value={localConfig.stale_min_gain_pct || 5}
-                  onChange={e => handleChange('stale_min_gain_pct', Number(e.target.value))}
+                  onChange={(e) => handleChange("stale_min_gain_pct", Number(e.target.value))}
                   disabled={!localConfig.stale_position_enabled}
                 />
               </div>
@@ -562,7 +585,7 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
                   step="0.1"
                   className="hud-input w-full"
                   value={localConfig.stale_social_volume_decay || 0.3}
-                  onChange={e => handleChange('stale_social_volume_decay', Number(e.target.value))}
+                  onChange={(e) => handleChange("stale_social_volume_decay", Number(e.target.value))}
                   disabled={!localConfig.stale_position_enabled}
                 />
                 <p className="text-[9px] text-hud-text-dim mt-1">Exit if volume drops to this % of entry</p>
@@ -575,16 +598,12 @@ export function SettingsModal({ config, onSave, onClose }: SettingsModalProps) {
             <button className="hud-button" onClick={onClose}>
               Cancel
             </button>
-            <button
-              className="hud-button"
-              onClick={handleSave}
-              disabled={saving}
-            >
-              {saving ? 'Saving...' : 'Save Configuration'}
+            <button className="hud-button" onClick={handleSave} disabled={saving}>
+              {saving ? "Saving..." : "Save Configuration"}
             </button>
           </div>
         </div>
       </Panel>
     </div>
-  )
+  );
 }

@@ -3,8 +3,9 @@ import type { LLMProvider } from "../types";
 import { createAISDKProvider, SUPPORTED_PROVIDERS, type SupportedProvider } from "./ai-sdk";
 import { createCloudflareGatewayProvider } from "./cloudflare-gateway";
 import { createOpenAIProvider } from "./openai";
+import { createZAIProvider } from "./z-ai";
 
-export type LLMProviderType = "openai-raw" | "ai-sdk" | "cloudflare-gateway";
+export type LLMProviderType = "openai-raw" | "ai-sdk" | "cloudflare-gateway" | "z-ai";
 
 /**
  * Factory function to create LLM provider based on environment configuration.
@@ -24,6 +25,18 @@ export function createLLMProvider(env: Env): LLMProvider | null {
   const openaiBaseUrl = openaiBaseUrlRaw ? openaiBaseUrlRaw : undefined;
 
   switch (providerType) {
+    case "z-ai": {
+      if (!env.ZAI_API_KEY) {
+        console.warn("LLM_PROVIDER=z-ai requires ZAI_API_KEY");
+        return null;
+      }
+      const zaiBaseUrlRaw = env.ZAI_BASE_URL?.trim().replace(/\/+$/, "");
+      return createZAIProvider({
+        apiKey: env.ZAI_API_KEY,
+        model: env.LLM_MODEL,
+        baseUrl: zaiBaseUrlRaw,
+      });
+    }
     case "cloudflare-gateway": {
       if (!env.CLOUDFLARE_AI_GATEWAY_ACCOUNT_ID || !env.CLOUDFLARE_AI_GATEWAY_ID || !env.CLOUDFLARE_AI_GATEWAY_TOKEN) {
         console.warn(
@@ -87,6 +100,8 @@ export function isLLMConfigured(env: Env): boolean {
   const providerType = (env.LLM_PROVIDER as LLMProviderType) ?? "openai-raw";
 
   switch (providerType) {
+    case "z-ai":
+      return !!env.ZAI_API_KEY;
     case "cloudflare-gateway":
       return !!(
         env.CLOUDFLARE_AI_GATEWAY_ACCOUNT_ID &&
