@@ -35,7 +35,7 @@ function getCorsHeaders(request: Request, env: Env): Record<string, string> {
   const origin = request.headers.get("Origin") || "";
   const allowedOrigins = env.CORS_ALLOWED_ORIGINS?.split(",").map((o: string) => o.trim()) || [];
   const isLocalhost = origin.startsWith("http://localhost:") || origin.startsWith("http://127.0.0.1:");
-  
+
   if (isLocalhost || allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
     return {
       "Access-Control-Allow-Origin": origin,

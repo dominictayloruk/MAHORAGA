@@ -33,7 +33,8 @@ export class ZAIProvider implements LLMProvider {
     this.apiKey = config.apiKey;
     // If model looks like an OpenAI/other provider model, use Z.AI default
     const providedModel = config.model?.toLowerCase() ?? "";
-    const isNonZAIModel = providedModel.includes("gpt") || providedModel.includes("claude") || providedModel.includes("gemini");
+    const isNonZAIModel =
+      providedModel.includes("gpt") || providedModel.includes("claude") || providedModel.includes("gemini");
     this.model = isNonZAIModel ? "GLM-4.7" : (config.model ?? "GLM-4.7");
     this.baseUrl = (config.baseUrl ?? "https://api.z.ai/api/coding/paas/v4").trim().replace(/\/+$/, "");
   }
@@ -101,7 +102,9 @@ export class ZAIProvider implements LLMProvider {
 
     if (!content || content.trim() === "") {
       if (reasoningContent && data.choices[0]?.finish_reason === "length") {
-        console.warn(`[Z.AI] Content empty due to token limit, reasoning model used all tokens on chain-of-thought. Consider increasing max_tokens.`);
+        console.warn(
+          `[Z.AI] Content empty due to token limit, reasoning model used all tokens on chain-of-thought. Consider increasing max_tokens.`
+        );
       }
       console.error(`[Z.AI] Empty Response Detected:`, {
         fullResponse: JSON.stringify(data, null, 2),
