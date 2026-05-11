@@ -24,27 +24,27 @@
     "setup:access": "npx tsx scripts/setup-access.ts"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.71",
-    "@ai-sdk/cohere": "^3.0.30",
-    "@ai-sdk/deepseek": "^2.0.29",
-    "@ai-sdk/google": "^3.0.64",
-    "@ai-sdk/groq": "^3.0.35",
-    "@ai-sdk/mistral": "^3.0.30",
-    "@ai-sdk/openai": "^3.0.53",
-    "@ai-sdk/xai": "^3.0.83",
+    "@ai-sdk/anthropic": "^3.0.76",
+    "@ai-sdk/cohere": "^3.0.35",
+    "@ai-sdk/deepseek": "^2.0.34",
+    "@ai-sdk/google": "^3.0.71",
+    "@ai-sdk/groq": "^3.0.39",
+    "@ai-sdk/mistral": "^3.0.36",
+    "@ai-sdk/openai": "^3.0.63",
+    "@ai-sdk/xai": "^3.0.89",
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "agents": "^0.11.5",
-    "ai": "^6.0.168",
-    "openai": "^6.34.0",
-    "zod": "^4.3.6"
+    "agents": "^0.12.3",
+    "ai": "^6.0.177",
+    "openai": "^6.37.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.13",
-    "@cloudflare/workers-types": "^4.20260424.1",
-    "@types/node": "^25.6.0",
-    "typescript": "^5.9.3",
+    "@biomejs/biome": "^2.4.15",
+    "@cloudflare/workers-types": "^4.20260511.1",
+    "@types/node": "^25.6.2",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.5",
-    "wrangler": "^4.85.0"
+    "wrangler": "^4.90.0"
   },
   "engines": {
     "node": ">=18.0.0"
